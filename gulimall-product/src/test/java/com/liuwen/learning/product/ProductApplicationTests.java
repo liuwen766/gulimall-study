@@ -16,8 +16,9 @@ public class ProductApplicationTests {
     @Autowired
     BrandService brandService;
 
+    // product服务测试
     @Test
-    public void contextLoads(){
+    public void contextLoads() {
         System.out.println(Integer.MAX_VALUE);
         BrandEntity brandEntity = new BrandEntity();
         brandEntity.setDescript("哈哈1哈");
