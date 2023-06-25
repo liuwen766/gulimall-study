@@ -3,6 +3,8 @@ package com.liuwen.learning.member.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.liuwen.learning.member.feign.CouponFeignService;
+import com.liuwen.learning.member.feign.OrderFeignService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +17,6 @@ import com.liuwen.learning.member.entity.MemberEntity;
 import com.liuwen.learning.member.service.MemberService;
 import com.liuwen.common.utils.PageUtils;
 import com.liuwen.common.utils.R;
-
 
 
 /**
@@ -31,15 +32,42 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private CouponFeignService couponFeignService;
+
+    @Autowired
+    private OrderFeignService orderFeignService;
+
     /**
      * 列表
      */
     @RequestMapping("/list")
     @RequiresPermissions("member:member:list")
-    public R list(@RequestParam Map<String, Object> params){
+    public R list(@RequestParam Map<String, Object> params) {
         PageUtils page = memberService.queryPage(params);
 
         return R.ok().put("page", page);
+    }
+
+    @RequestMapping("/coupons")
+    public R testCoupons() {
+        MemberEntity member = new MemberEntity();
+        member.setNickname("会员昵称张三");
+
+        R memberCoupon = couponFeignService.memberCoupons();
+        //打印会员和优惠券信息
+        return R.ok().put("member", member).put("coupons", memberCoupon.get("page"));
+    }
+
+    @RequestMapping("/orders")
+    public R testOrders() {
+        MemberEntity member = new MemberEntity();
+        member.setNickname("会员昵称李四");
+
+        R memberOrders = orderFeignService.memberOrders();
+        System.out.println(memberOrders);
+        //打印会员和优惠券信息
+        return R.ok().put("member", member).put("orders", memberOrders.get("page"));
     }
 
 
@@ -48,8 +76,8 @@ public class MemberController {
      */
     @RequestMapping("/info/{id}")
     @RequiresPermissions("member:member:info")
-    public R info(@PathVariable("id") Long id){
-		MemberEntity member = memberService.getById(id);
+    public R info(@PathVariable("id") Long id) {
+        MemberEntity member = memberService.getById(id);
 
         return R.ok().put("member", member);
     }
@@ -59,8 +87,8 @@ public class MemberController {
      */
     @RequestMapping("/save")
     @RequiresPermissions("member:member:save")
-    public R save(@RequestBody MemberEntity member){
-		memberService.save(member);
+    public R save(@RequestBody MemberEntity member) {
+        memberService.save(member);
 
         return R.ok();
     }
@@ -70,8 +98,8 @@ public class MemberController {
      */
     @RequestMapping("/update")
     @RequiresPermissions("member:member:update")
-    public R update(@RequestBody MemberEntity member){
-		memberService.updateById(member);
+    public R update(@RequestBody MemberEntity member) {
+        memberService.updateById(member);
 
         return R.ok();
     }
@@ -81,8 +109,8 @@ public class MemberController {
      */
     @RequestMapping("/delete")
     @RequiresPermissions("member:member:delete")
-    public R delete(@RequestBody Long[] ids){
-		memberService.removeByIds(Arrays.asList(ids));
+    public R delete(@RequestBody Long[] ids) {
+        memberService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
     }
