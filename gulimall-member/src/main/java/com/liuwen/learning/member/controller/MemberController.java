@@ -56,7 +56,7 @@ public class MemberController {
 
         R memberCoupon = couponFeignService.memberCoupons();
         //打印会员和优惠券信息
-        return R.ok().put("member", member).put("coupons", memberCoupon.get("page"));
+        return R.ok().put("member", member).put("coupons", memberCoupon.get("coupons"));
     }
 
     @RequestMapping("/orders")
